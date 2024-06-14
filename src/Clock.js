@@ -92,7 +92,7 @@ const Clock = () => {
       .attr("font-size", 24)
       .attr("font-weight", "bold")
       .attr("text-anchor", "middle")
-      .text("Omega");
+      .text("Anderson");
 
     svg
       .append("text")
