@@ -62,7 +62,7 @@ const Clock = () => {
         .append("text")
         .attr("x", 225 + 180 * Math.cos(((angle - 90) * Math.PI) / 180))
         .attr("y", 225 + 180 * Math.sin(((angle - 90) * Math.PI) / 180))
-        .attr("fill", "white")
+        .attr("fill", "#C0C0C0") // Grey color
         .attr("font-size", 12)
         .attr("text-anchor", "middle")
         .attr(
@@ -84,7 +84,7 @@ const Clock = () => {
       .attr("stroke-width", 10)
       .attr("fill", "black");
 
-    // Omega and Speedmaster text
+    // Anderson and Speedmaster text
     svg
       .append("text")
       .attr("x", 225)
@@ -130,12 +130,44 @@ const Clock = () => {
 
     // Sub-dials
     const subDials = [
-      { cx: 150, cy: 170, label: "Sub-dial 1" },
-      { cx: 225, cy: 300, label: "Sub-dial 2" },
-      { cx: 300, cy: 170, label: "Sub-dial 3" },
+      { cx: 150, cy: 220, label: "Sub-dial 1" }, // Adjusted position for more space
+      { cx: 300, cy: 220, label: "Sub-dial 2" }, // Adjusted position for more space
+      { cx: 225, cy: 300, label: "Sub-dial 3" },
     ];
 
-    subDials.forEach(({ cx, cy, label }) => {
+    // Sub-dial details
+    const subDialDetails = [
+      {
+        // First sub-dial (left)
+        ticks: 5,
+        numbers: [
+          { text: "40", x: -20, y: 10 },
+          { text: "20", x: 20, y: 10 },
+          { text: "60", x: 0, y: -30 },
+        ],
+      },
+      {
+        // Second sub-dial (right)
+        ticks: 10,
+        numbers: [
+          { text: "20", x: -20, y: 10 },
+          { text: "10", x: 20, y: 10 },
+          { text: "30", x: 0, y: -30 },
+        ],
+      },
+      {
+        // Third sub-dial (bottom)
+        ticks: 12,
+        numbers: [
+          { text: "12", x: 0, y: -30 },
+          { text: "3", x: 30, y: 0 },
+          { text: "6", x: 0, y: 30 },
+          { text: "9", x: -30, y: 0 },
+        ],
+      },
+    ];
+
+    subDials.forEach(({ cx, cy }, index) => {
       svg
         .append("circle")
         .attr("cx", cx)
@@ -144,9 +176,13 @@ const Clock = () => {
         .attr("stroke", "white")
         .attr("stroke-width", 2)
         .attr("fill", "black");
-      for (let i = 0; i < 60; i++) {
-        const angle = ((i * 6 - 90) * Math.PI) / 180;
-        const length = i % 5 === 0 ? 6 : 3;
+
+      const details = subDialDetails[index];
+
+      // Sub-dial ticks
+      for (let i = 0; i < details.ticks; i++) {
+        const angle = ((i * (360 / details.ticks) - 90) * Math.PI) / 180;
+        const length = i % (details.ticks / 4) === 0 ? 6 : 3;
         svg
           .append("line")
           .attr("x1", cx + 40 * Math.cos(angle))
@@ -154,8 +190,22 @@ const Clock = () => {
           .attr("x2", cx + (40 - length) * Math.cos(angle))
           .attr("y2", cy + (40 - length) * Math.sin(angle))
           .attr("stroke", "white")
-          .attr("stroke-width", i % 5 === 0 ? 2 : 1);
+          .attr("stroke-width", i % (details.ticks / 4) === 0 ? 2 : 1);
       }
+
+      // Sub-dial numbers
+      details.numbers.forEach(({ text, x, y }) => {
+        svg
+          .append("text")
+          .attr("x", cx + x)
+          .attr("y", cy + y)
+          .attr("fill", "white")
+          .attr("font-size", 12)
+          .attr("text-anchor", "middle")
+          .text(text);
+      });
+
+      // Sub-dial hands
       svg
         .append("line")
         .attr("x1", cx)
@@ -224,15 +274,19 @@ const Clock = () => {
           .attr("fill", color);
       } else if (pointed) {
         // Add the pointed end for hour and minute hands
+        const point1 = {
+          x: x + 10 * Math.sin(radians(angle + 90)),
+          y: y - 10 * Math.cos(radians(angle + 90)),
+        };
+        const point2 = {
+          x: x + 10 * Math.sin(radians(angle - 90)),
+          y: y - 10 * Math.cos(radians(angle - 90)),
+        };
         svg
           .append("polygon")
           .attr(
             "points",
-            `${x},${y} ${x - 5 * Math.sin(radians(angle + 2))},${
-              y - 5 * Math.cos(radians(angle + 2))
-            } ${x - 5 * Math.sin(radians(angle - 2))},${
-              y - 5 * Math.cos(radians(angle - 2))
-            }`
+            `${x},${y} ${point1.x},${point1.y} ${point2.x},${point2.y}`
           )
           .attr("fill", color);
       }
