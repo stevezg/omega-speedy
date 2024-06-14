@@ -141,28 +141,28 @@ const Clock = () => {
         // First sub-dial (left)
         ticks: 5,
         numbers: [
-          { text: "40", x: -20, y: 10 },
-          { text: "20", x: 20, y: 10 },
-          { text: "60", x: 0, y: -30 },
+          { text: "40", x: -25, y: 15 },
+          { text: "20", x: 25, y: 15 },
+          { text: "60", x: 0, y: -25 },
         ],
       },
       {
         // Second sub-dial (right)
         ticks: 10,
         numbers: [
-          { text: "20", x: -20, y: 10 },
-          { text: "10", x: 20, y: 10 },
-          { text: "30", x: 0, y: -30 },
+          { text: "20", x: -25, y: 15 },
+          { text: "10", x: 25, y: 15 },
+          { text: "30", x: 0, y: -25 },
         ],
       },
       {
         // Third sub-dial (bottom)
         ticks: 12,
         numbers: [
-          { text: "12", x: 0, y: -30 },
-          { text: "3", x: 30, y: 0 },
+          { text: "12", x: 0, y: -25 },
+          { text: "3", x: 30, y: 5 },
           { text: "6", x: 0, y: 30 },
-          { text: "9", x: -30, y: 0 },
+          { text: "9", x: -30, y: 5 },
         ],
       },
     ];
@@ -183,6 +183,11 @@ const Clock = () => {
       for (let i = 0; i < details.ticks; i++) {
         const angle = ((i * (360 / details.ticks) - 90) * Math.PI) / 180;
         const length = i % (details.ticks / 4) === 0 ? 6 : 3;
+        if (
+          details.numbers.some((num) => radians(angle) === radians(num.angle))
+        ) {
+          continue; // Skip adding tick if there's a number
+        }
         svg
           .append("line")
           .attr("x1", cx + 40 * Math.cos(angle))
