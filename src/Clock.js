@@ -8,7 +8,7 @@ const Clock = () => {
   useEffect(() => {
     const timerId = setInterval(() => {
       setTime(new Date());
-    }, 1000);
+    }, 100); // Update every 100 milliseconds for smooth second hand
 
     return () => clearInterval(timerId);
   }, []);
@@ -26,9 +26,10 @@ const Clock = () => {
     const hours = time.getHours() % 12;
     const minutes = time.getMinutes();
     const seconds = time.getSeconds();
+    const milliseconds = time.getMilliseconds();
     const hourAngle = (hours + minutes / 60) * 30;
-    const minuteAngle = (minutes + seconds / 60) * 6;
-    const secondAngle = seconds * 6;
+    const minuteAngle = (minutes + (seconds + milliseconds / 1000) / 60) * 6;
+    const secondAngle = (seconds + milliseconds / 1000) * 6;
 
     // Outer bezel circle
     svg
@@ -36,7 +37,7 @@ const Clock = () => {
       .attr("cx", 225)
       .attr("cy", 225)
       .attr("r", 210)
-      .attr("stroke", "white")
+      .attr("stroke", "#C0C0C0") // Grey steel color
       .attr("stroke-width", 10)
       .attr("fill", "black");
 
@@ -79,7 +80,7 @@ const Clock = () => {
       .attr("cx", 225)
       .attr("cy", 225)
       .attr("r", 195)
-      .attr("stroke", "white")
+      .attr("stroke", "#C0C0C0") // Grey steel color
       .attr("stroke-width", 10)
       .attr("fill", "black");
 
